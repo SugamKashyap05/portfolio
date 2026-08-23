@@ -36,13 +36,13 @@ export const projects = [
   },
   {
     id: "02",
-    title: "RawClaw",
+    title: "Lead → Launch",
     status: "In Development",
-    subtitle: "Local-first multi-agent desktop platform",
+    subtitle: "Autonomous freelance client-acquisition pipeline",
     description:
-      "Multi-operator research platform in a Turborepo monorepo with a Tauri native shell — ChromaDB vector memory, WebSocket + SSE streaming, and VRAM-aware scheduling for local inference on consumer GPUs.",
-    tags: ["Turborepo", "NestJS", "FastAPI", "Tauri", "ChromaDB", "Ollama"],
-    year: "2025",
+      "Local-first lead-generation engine pairing a Next.js dashboard with a custom Claude Code skill — automating a five-phase workflow: Scrape → Audit → Rank → Build → Outreach. Business discovery runs through Google Maps and Apify scraping; automated PageSpeed audits feed ranking logic that surfaces high-potential leads; an AI website-builder step then produces a tailored demo site plus Hinglish/English outreach drafts for each prospective client.",
+    tags: ["Next.js", "Claude Code Skill", "Apify", "Google Maps", "PageSpeed API"],
+    year: "2026",
   },
   {
     id: "03",
@@ -67,8 +67,8 @@ export const projects = [
 ] satisfies readonly Project[];
 
 export const nowBuilding = {
-  name: "RawClaw",
-  note: "Local-first multi-agent desktop platform",
+  name: "Lead → Launch",
+  note: "AI-driven freelance client-acquisition pipeline",
 } as const;
 
 export const skillGauges = [
