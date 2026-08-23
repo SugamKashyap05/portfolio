@@ -154,7 +154,7 @@ function applyGains() {
     g.cancelScheduledValues(t);
     g.setValueAtTime(Math.max(g.value, 0.0001), t);
     if (phase === "live") {
-      g.setTargetAtTime(Math.max(velTarget(vsAbs), 0.035), t, 0.6);
+      g.setTargetAtTime(velTarget(vsAbs), t, 0.6);
     } else {
       g.setTargetAtTime(0, t, 0.12);
     }
@@ -196,6 +196,7 @@ export function installAmbientAutostart(): () => void {
   events.forEach((n) => window.addEventListener(n, handler, opts));
   return () => {
     events.forEach((n) => window.removeEventListener(n, handler));
+    autostartInstalled = false;
   };
 }
 

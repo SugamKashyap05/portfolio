@@ -27,23 +27,25 @@ export default function RadioToggle() {
     setPhase(getRadioPhase());
   };
 
+  const label = failed
+    ? "N/A"
+    : phase === "standby"
+      ? "STANDBY"
+      : phase === "muted"
+        ? "MUTED"
+        : "LIVE";
+
   return (
     <button
       id="radiobtn"
       type="button"
       aria-pressed={phase === "live"}
+      aria-label={"RADIO " + label}
       onClick={handle}
       className={failed ? undefined : phase === "live" ? "on" : phase}
     >
       <span className="dot" aria-hidden />
-      RADIO ·{" "}
-      {failed
-        ? "N/A"
-        : phase === "standby"
-          ? "STANDBY"
-          : phase === "muted"
-            ? "MUTED"
-            : "LIVE"}
+      RADIO · {label}
     </button>
   );
 }
