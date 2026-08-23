@@ -5,6 +5,7 @@ export const site = {
   email: "sugamkashyap1@gmail.com",
   location: "Ludhiana, Punjab, India",
   socials: [
+    { label: "GitHub", href: "https://github.com/SugamKashyap05" },
     { label: "LinkedIn", href: "https://linkedin.com/in/sugam-kashyap" },
     { label: "Email", href: "mailto:sugamkashyap1@gmail.com" },
   ],
