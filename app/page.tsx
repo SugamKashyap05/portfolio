@@ -6,6 +6,7 @@ import Atmosphere from "@/components/atmosphere/Atmosphere";
 import TelemetryHUD from "@/components/ui/TelemetryHUD";
 import FlightPath from "@/components/ui/FlightPath";
 import StaticFX from "@/components/ui/StaticFX";
+import MissionStamp from "@/components/ui/MissionStamp";
 import RadioToggle from "@/components/ui/RadioToggle";
 import Hero from "@/components/sections/Hero";
 import AboutLog from "@/components/sections/AboutLog";
@@ -22,6 +23,7 @@ export default function Page() {
         SK · CV-01
       </a>
       <TelemetryHUD />
+      <MissionStamp />
       <FlightPath />
       <RadioToggle />
       <SmoothScroll>

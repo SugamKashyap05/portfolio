@@ -398,6 +398,33 @@ body {
   animation: stx 0.24s steps(4, end) 1;
 }
 
+#mission-stamp {
+  position: fixed;
+  left: 20px;
+  bottom: 18px;
+  z-index: 55;
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  color: var(--amber);
+  background: var(--panel);
+  border: 1px solid rgba(255, 180, 84, 0.45);
+  padding: 8px 12px;
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+  pointer-events: none;
+}
+
+#mission-stamp.on {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .sway-flow {
   position: relative;
   z-index: 10;
@@ -736,6 +763,10 @@ body {
     font-size: 10px;
     top: 12px;
     right: 12px;
+  }
+  #mission-stamp {
+    left: 12px;
+    bottom: 64px;
   }
   .t-main .t-val.t-big {
     font-size: 17px;

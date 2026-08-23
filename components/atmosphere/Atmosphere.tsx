@@ -24,6 +24,46 @@ type FogStrip = {
   yo: number; h: number; a: number; sp: number; ph: number;
 };
 
+const CB_ALT = 11700;
+
+function makeRibbonSprite(core: string, tail: string): HTMLCanvasElement {
+  const c = document.createElement("canvas");
+  c.width = 220;
+  c.height = 520;
+  const g = c.getContext("2d")!;
+  const v = g.createLinearGradient(0, 0, 0, 520);
+  v.addColorStop(0, `${core}00`);
+  v.addColorStop(0.22, `${core}8c`);
+  v.addColorStop(0.48, `${core}b4`);
+  v.addColorStop(0.74, `${tail}59`);
+  v.addColorStop(1, `${tail}00`);
+  g.fillStyle = v;
+  g.fillRect(0, 0, 220, 520);
+  const m = g.createLinearGradient(0, 0, 220, 0);
+  m.addColorStop(0, "rgba(0,0,0,0)");
+  m.addColorStop(0.5, "rgba(0,0,0,1)");
+  m.addColorStop(1, "rgba(0,0,0,0)");
+  g.globalCompositeOperation = "destination-in";
+  g.fillStyle = m;
+  g.fillRect(0, 0, 220, 520);
+  return c;
+}
+
+function makeBloomSprite(): HTMLCanvasElement {
+  const c = document.createElement("canvas");
+  c.width = 256;
+  c.height = 256;
+  const g = c.getContext("2d")!;
+  const rg = g.createRadialGradient(128, 128, 8, 128, 128, 128);
+  rg.addColorStop(0, "rgba(255,246,228,0.92)");
+  rg.addColorStop(0.32, "rgba(255,214,158,0.42)");
+  rg.addColorStop(0.62, "rgba(255,178,110,0.12)");
+  rg.addColorStop(1, "rgba(255,170,100,0)");
+  g.fillStyle = rg;
+  g.fillRect(0, 0, 256, 256);
+  return c;
+}
+
 function makeCloudSprite(tint: string): HTMLCanvasElement {
   const c = document.createElement("canvas");
   c.width = 300;
@@ -73,6 +113,9 @@ export default function Atmosphere() {
     let prevT = performance.now();
     let raf = 0;
     let titleTick = 0;
+    let prevAlt = 0;
+    let cbT = -10;
+    let shakeT0 = -10;
 
     const swayCur = { x: 0, y: 0 };
     const swayTgt = { x: 0, y: 0 };
@@ -115,7 +158,17 @@ export default function Atmosphere() {
     const S_DAY = makeCloudSprite("#eef4ff");
     const S_WARM = makeCloudSprite("#ffddb6");
 
+    const AUR = [
+      { spr: makeRibbonSprite("#50ffb4", "#9660ff"), a: 1, yo: 0.3 },
+      { spr: makeRibbonSprite("#5cffc2", "#8a5cff"), a: 0.78, yo: 0.52 },
+      { spr: makeRibbonSprite("#46f0aa", "#a86bff"), a: 0.6, yo: 0.14 },
+    ];
+    const BLOOM = makeBloomSprite();
+
     const shot = { on: false, x: 0, y: 0, vx: 0, vy: 0, l: 0, next: 5 };
+    const sat = {
+      on: false, x: 0, y: 0, vx: 0, vy: 0, life: 0, dur: 0, next: 18,
+    };
 
     function resizeCanvas() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -185,6 +238,57 @@ export default function Atmosphere() {
       shot.y += shot.vy / 60;
     }
 
+    function updateSat(t: number, vis: number) {
+      if (!sat.on) {
+        if (vis < 0.05 || t < sat.next) return;
+        sat.on = true;
+        sat.life = 0;
+        sat.dur = 12 + Math.random() * 6;
+        const ltr = Math.random() < 0.5;
+        sat.x = ltr ? -30 : vw + 30;
+        sat.y = vh * (0.06 + Math.random() * 0.55);
+        const dy = (Math.random() - 0.5) * vh * 0.3;
+        sat.vx = (ltr ? vw + 60 : -(vw + 60)) / sat.dur;
+        sat.vy = dy / sat.dur;
+        return;
+      }
+      sat.life += 1 / 60;
+      sat.x += sat.vx / 60;
+      sat.y += sat.vy / 60;
+      if (sat.life > sat.dur || sat.x < -40 || sat.x > vw + 40) {
+        sat.on = false;
+        sat.next = t + 15 + Math.random() * 20;
+        return;
+      }
+      ctx!.globalAlpha = vis * (0.7 + 0.3 * Math.sin(t * 6));
+      ctx!.fillStyle = "#ffffff";
+      ctx!.fillRect(sat.x - 0.9, sat.y - 0.9, 1.8, 1.8);
+      if (sat.y < vh * 0.5) {
+        ctx!.globalAlpha = 0.55 * Math.min(1, vis * 1.6);
+        ctx!.fillStyle = "rgba(170,215,255,0.9)";
+        ctx!.font = "9px 'JetBrains Mono', monospace";
+        ctx!.fillText("ISS · 408 KM", sat.x + 10, sat.y - 8);
+      }
+    }
+
+    function drawAurora(t: number, alt: number) {
+      const gate =
+        clamp((alt - 50000) / 9000, 0, 1) * clamp((85000 - alt) / 9000, 0, 1);
+      if (gate <= 0.004) return;
+      const span = vw + 420;
+      for (let i = 0; i < AUR.length; i++) {
+        const rb = AUR[i];
+        const ph = t * (11 + i * 5) + i * span * 0.37;
+        const x = ((ph % span) + span) % span - 210;
+        const y = vh * rb.yo + Math.sin(t * 0.26 + i * 2.1) * 46;
+        const w = 170 + i * 55;
+        const h = vh * (0.85 + i * 0.12);
+        ctx!.globalAlpha =
+          gate * 0.17 * rb.a * (0.75 + 0.25 * Math.sin(t * 0.21 + i * 1.7));
+        ctx!.drawImage(rb.spr, x, y - h * 0.5, w, h);
+      }
+    }
+
     function drawScene(t: number, alt: number) {
       ctx!.clearRect(0, 0, vw, vh);
 
@@ -199,6 +303,8 @@ export default function Atmosphere() {
       }
 
       updateShooter(t, svis);
+      updateSat(t, svis);
+      drawAurora(t, alt);
 
       const wWarm = clamp(1 - alt / 9500, 0, 1);
       for (const c of clouds) {
@@ -237,6 +343,16 @@ export default function Atmosphere() {
           ctx!.fillRect(-vw * 0.25 + off, yy - f.h, vw * 1.5, f.h * 2);
         }
       }
+
+      const bA = 0.5 * clamp((alt - 90000) / 10000, 0, 1);
+      if (bA > 0.002) {
+        const vmin = Math.min(vw, vh);
+        const cx = vw * 0.58 + vmin * 0.32;
+        const cy = vh * 0.12 + vmin * 0.32;
+        const r = vmin * 1.05;
+        ctx!.globalAlpha = bA;
+        ctx!.drawImage(BLOOM, cx - r, cy - r, r * 2, r * 2);
+      }
       ctx!.globalAlpha = 1;
     }
 
@@ -255,6 +371,14 @@ export default function Atmosphere() {
       ascentStore.set(next);
       const alt = next.alt;
       const p = next.progress;
+
+      if ((prevAlt - CB_ALT) * (alt - CB_ALT) < 0 && t - cbT > 2 && !reducedRef.current) {
+        cbT = t;
+        shakeT0 = t;
+      }
+      prevAlt = alt;
+      const cbAge = t - cbT;
+      const wo = cbAge >= 0 && cbAge < 0.45 ? 0.55 * Math.pow(1 - cbAge / 0.45, 2) : 0;
 
       const st = document.documentElement.style;
       const sk = skyAt(alt);
@@ -276,6 +400,13 @@ export default function Atmosphere() {
 
       drawScene(t, alt);
 
+      if (wo > 0.002) {
+        ctx!.globalAlpha = wo;
+        ctx!.fillStyle = "#f4f8ff";
+        ctx!.fillRect(0, 0, vw, vh);
+        ctx!.globalAlpha = 1;
+      }
+
       if (!reducedRef.current) {
         const k = 1 - Math.pow(0.9, dt / 16.7);
         swayCur.x += (swayTgt.x - swayCur.x) * k;
@@ -284,8 +415,16 @@ export default function Atmosphere() {
         swayCur.x = 0;
         swayCur.y = 0;
       }
-      st.setProperty("--sx", swayCur.x.toFixed(4));
-      st.setProperty("--sy", swayCur.y.toFixed(4));
+      let shx = 0;
+      let shy = 0;
+      const shAge = t - shakeT0;
+      if (shAge >= 0 && shAge < 0.6 && !reducedRef.current) {
+        const amp = 6 * Math.exp(-shAge * 6.5);
+        shx = Math.sin(shAge * 63) * amp;
+        shy = Math.cos(shAge * 51) * amp;
+      }
+      st.setProperty("--sx", (swayCur.x + shx / 14).toFixed(4));
+      st.setProperty("--sy", (swayCur.y + shy / 10).toFixed(4));
       st.setProperty("--rx", (-swayCur.y * 0.5).toFixed(3) + "deg");
       st.setProperty("--ry", (swayCur.x * 0.6).toFixed(3) + "deg");
 
@@ -317,6 +456,7 @@ export default function Atmosphere() {
 
     measure();
     lastWi = wiFor(computeAscent(window.scrollY, scrollMax).progress);
+    prevAlt = computeAscent(window.scrollY, scrollMax).alt;
 
     let roq = false;
     const ro = new ResizeObserver(() => {
