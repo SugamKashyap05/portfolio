@@ -19,7 +19,7 @@ export default function Page() {
       <Atmosphere />
       <StaticFX />
       <a className="brand" href="#hero">
-        RT · CV-01
+        SK · CV-01
       </a>
       <TelemetryHUD />
       <FlightPath />

@@ -299,7 +299,7 @@ export default function Atmosphere() {
 
       titleTick++;
       if (titleTick % 40 === 0) {
-        document.title = `▲ ${(alt / 1000).toFixed(1)} KM · RYO TANAKA`;
+        document.title = `▲ ${(alt / 1000).toFixed(1)} KM · SUGAM KASHYAP`;
       }
 
       raf = requestAnimationFrame(frame);

@@ -17,7 +17,7 @@ export default function ProjectLogs() {
         >
           <h2>{p.title}</h2>
           <p className="role">
-            {p.subtitle} · {p.year}
+            {p.subtitle} · {p.status} · {p.year}
           </p>
           <p>{p.description}</p>
           <ul className="chips">

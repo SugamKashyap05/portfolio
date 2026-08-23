@@ -15,8 +15,8 @@ export default function ContactFinal() {
       <h2 id="contact-title">Kármán line crossed</h2>
       <p>
         Signal degrades beyond this point — the fastest way to reach me is
-        directly. Currently taking on select contracts in real-time interfaces,
-        WebGL, and creative engineering.
+        directly. Currently taking on select contracts in agentic AI systems,
+        LLM-integrated applications, and full stack engineering.
       </p>
       <div className="actions">
         <a className="btn" href={`mailto:${site.email}`}>
