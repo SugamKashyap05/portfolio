@@ -17,7 +17,6 @@ let lastBurst = 0;
 let humGain: GainNode | null = null;
 let humFilter: BiquadFilterNode | null = null;
 let humStarted = false;
-let unsubscribeAscent: (() => void) | null = null;
 let autostartInstalled = false;
 
 let phase: RadioPhase = "standby";
@@ -140,12 +139,7 @@ function startHum() {
     o2.start();
     nsrc.start();
     humStarted = true;
-    if (phase === "live") {
-      const t = ac.currentTime;
-      humGain.gain.setValueAtTime(0, t);
-      humGain.gain.linearRampToValueAtTime(0.05, t + 2.5);
-    }
-    unsubscribeAscent = ascentStore.subscribe(onAscentUpdate);
+    ascentStore.subscribe(onAscentUpdate);
   } catch {
     humStarted = false;
   }
