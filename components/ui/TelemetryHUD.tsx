@@ -4,9 +4,7 @@ import { useEffect, useRef } from "react";
 import { ascentStore } from "@/lib/ascent";
 import { fmtAlt, fmtPressure } from "@/lib/atmosphere";
 import { scrambleText } from "@/lib/scramble";
-import { WAYPOINT_NAV_EVENT } from "@/lib/polish";
-
-type NavDetail = { label: string; alt: string; dir: 1 | -1 };
+import { WAYPOINT_NAV_EVENT, NavDetail } from "@/lib/polish";
 
 export default function TelemetryHUD() {
   const altRef = useRef<HTMLSpanElement>(null);
@@ -45,11 +43,13 @@ export default function TelemetryHUD() {
       }
     });
 
+    let phaseCancel: (() => void) | null = null;
     const onWaypoint = () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const phase = ascentStore.get().phase;
       if (phaseRef.current) {
-        scrambleText(phaseRef.current, phase, 600);
+        phaseCancel?.();
+        phaseCancel = scrambleText(phaseRef.current, phase, 600);
       }
     };
     window.addEventListener("ascent-waypoint", onWaypoint);
@@ -73,6 +73,7 @@ export default function TelemetryHUD() {
       window.removeEventListener("ascent-waypoint", onWaypoint);
       window.removeEventListener(WAYPOINT_NAV_EVENT, onNav);
       if (navTimer) clearTimeout(navTimer);
+      phaseCancel?.();
     };
   }, []);
 

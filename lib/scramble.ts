@@ -1,8 +1,18 @@
 export const SCRAMBLE_GLYPHS = "#/\\<>[]{}*+-_";
 
-export function scrambleText(el: HTMLElement, fin: string, duration = 600) {
+const active = new WeakMap<HTMLElement, () => void>();
+
+export function scrambleText(
+  el: HTMLElement,
+  fin: string,
+  duration = 600
+): () => void {
+  active.get(el)?.();
+  let rafId = 0;
+  let cancelled = false;
   const start = performance.now();
   const tick = (now: number) => {
+    if (cancelled) return;
     const p = Math.min(1, (now - start) / Math.max(1, duration));
     const solved = Math.floor(p * fin.length);
     let out = "";
@@ -14,7 +24,14 @@ export function scrambleText(el: HTMLElement, fin: string, duration = 600) {
       }
     }
     el.textContent = out;
-    if (p < 1) requestAnimationFrame(tick);
+    if (p < 1) rafId = requestAnimationFrame(tick);
   };
-  requestAnimationFrame(tick);
+  rafId = requestAnimationFrame(tick);
+  const cancel = () => {
+    cancelled = true;
+    if (rafId) cancelAnimationFrame(rafId);
+    if (active.get(el) === cancel) active.delete(el);
+  };
+  active.set(el, cancel);
+  return cancel;
 }

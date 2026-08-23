@@ -463,7 +463,6 @@ export default function Atmosphere() {
     };
     const enableGyro = async () => {
       if (gyroBound || !coarse || reducedRef.current) return;
-      gyroBound = true;
       try {
         const doe = window.DeviceOrientationEvent as unknown as {
           requestPermission?: () => Promise<string>;
@@ -472,6 +471,7 @@ export default function Atmosphere() {
           const res = await doe.requestPermission();
           if (res !== "granted") return;
         }
+        gyroBound = true;
         window.addEventListener("deviceorientation", onOrient);
       } catch {}
     };

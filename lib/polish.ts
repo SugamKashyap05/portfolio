@@ -2,10 +2,11 @@
 
 import { useEffect } from "react";
 import { scrambleText } from "@/lib/scramble";
+import { peekSmoothScroll } from "@/lib/scroll-bus";
 
 export const WAYPOINT_NAV_EVENT = "waypoint-nav";
 
-type NavDetail = { label: string; alt: string; dir: 1 | -1 };
+export type NavDetail = { label: string; alt: string; dir: 1 | -1 };
 
 function motionReduced() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -95,19 +96,25 @@ export function useScrambleLogHeadings() {
       document.querySelectorAll<HTMLElement>(".log h2")
     );
     if (!heads.length) return;
+    const cancels = new Map<HTMLElement, () => void>();
     const io = new IntersectionObserver(
       (entries) => {
         for (const en of entries) {
           if (!en.isIntersecting) continue;
           io.unobserve(en.target);
           const h = en.target as HTMLElement;
-          scrambleText(h, h.textContent ?? "", 600);
+          cancels.get(h)?.();
+          cancels.set(h, scrambleText(h, h.textContent ?? "", 600));
         }
       },
       { threshold: 0.5 }
     );
     heads.forEach((h) => io.observe(h));
-    return () => io.disconnect();
+    return () => {
+      io.disconnect();
+      cancels.forEach((cancel) => cancel());
+      cancels.clear();
+    };
   }, []);
 }
 
@@ -125,9 +132,10 @@ export function useWaypointKeys() {
       )
         return;
       let dir: 1 | -1 = 1;
-      if (e.key === "j" || e.key === "J" || e.key === "ArrowDown") dir = 1;
-      else if (e.key === "k" || e.key === "K" || e.key === "ArrowUp") dir = -1;
+      if (e.key === "j" || e.key === "J") dir = 1;
+      else if (e.key === "k" || e.key === "K") dir = -1;
       else return;
+      e.preventDefault();
 
       const wps = Array.from(
         document.querySelectorAll<HTMLElement>("[data-waypoint]")
@@ -143,10 +151,19 @@ export function useWaypointKeys() {
       });
       const nextIdx = Math.min(wps.length - 1, Math.max(0, idx + dir));
       const tgt = wps[nextIdx];
-      tgt.scrollIntoView({
-        behavior: reduced ? "auto" : "smooth",
-        block: "center",
-      });
+      const lenis = peekSmoothScroll() as {
+        scrollTo(target: Element, options?: { offset?: number }): void;
+      } | null;
+      if (lenis) {
+        lenis.scrollTo(tgt, {
+          offset: -(window.innerHeight - tgt.offsetHeight) / 2,
+        });
+      } else {
+        tgt.scrollIntoView({
+          behavior: reduced ? "auto" : "smooth",
+          block: "center",
+        });
+      }
       window.dispatchEvent(
         new CustomEvent<NavDetail>(WAYPOINT_NAV_EVENT, {
           detail: {
