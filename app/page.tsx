@@ -6,6 +6,7 @@ import Atmosphere from "@/components/atmosphere/Atmosphere";
 import TelemetryHUD from "@/components/ui/TelemetryHUD";
 import FlightPath from "@/components/ui/FlightPath";
 import StaticFX from "@/components/ui/StaticFX";
+import Preloader from "@/components/ui/Preloader";
 import MissionStamp from "@/components/ui/MissionStamp";
 import RadioToggle from "@/components/ui/RadioToggle";
 import Hero from "@/components/sections/Hero";
@@ -19,6 +20,7 @@ export default function Page() {
     <MotionConfig reducedMotion="user">
       <Atmosphere />
       <StaticFX />
+      <Preloader />
       <a className="brand" href="#hero">
         SK · CV-01
       </a>
