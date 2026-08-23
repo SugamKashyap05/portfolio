@@ -1,16 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: "export",
+  trailingSlash: true,
+  basePath: "/portfolio",
   images: {
-    formats: ["image/avif", "image/webp"],
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "coresg-normal.trae.ai",
-      },
-    ],
+    unoptimized: true,
   },
-  transpilePackages: ["three"],
 };
 
 export default nextConfig;
