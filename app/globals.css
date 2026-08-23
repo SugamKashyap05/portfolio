@@ -383,6 +383,24 @@ body {
   animation: blink 1.6s ease-in-out infinite;
 }
 
+#radiobtn.standby .dot {
+  background: transparent;
+  border: 1px solid #4a5b78;
+  animation: none;
+  box-shadow: none;
+}
+
+#radiobtn.muted {
+  color: var(--dim);
+  border-color: var(--line);
+}
+
+#radiobtn.muted .dot {
+  background: #55627a;
+  animation: none;
+  box-shadow: none;
+}
+
 #staticfx {
   position: fixed;
   inset: 0;
