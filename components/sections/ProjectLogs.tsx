@@ -15,7 +15,7 @@ export default function ProjectLogs() {
           id={`project-${p.id}`}
           label={p.title.toUpperCase()}
         >
-          <h2>{p.title}</h2>
+          <h2 id={`project-${p.id}-title`}>{p.title}</h2>
           <p className="role">
             {p.subtitle} · {p.status} · {p.year}
           </p>

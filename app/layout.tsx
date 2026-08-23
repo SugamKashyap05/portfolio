@@ -19,8 +19,7 @@ const sans = Manrope({
 
 export const metadata: Metadata = {
   title: `${site.name} — ${site.role}`,
-  description:
-    "Portfolio of Sugam Kashyap — full stack developer and AI systems engineer. A scroll-driven ascent from misty dawn launch to the edge of space.",
+  description: `${site.name} — full stack developer and AI systems engineer. A scroll-driven ascent from misty dawn launch to the edge of space.`,
 };
 
 export const viewport: Viewport = {

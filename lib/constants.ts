@@ -10,6 +10,18 @@ export const site = {
   ],
 } as const;
 
+export type ProjectStatus = "Live" | "In Development" | "Capstone";
+
+export type Project = {
+  id: string;
+  title: string;
+  status: ProjectStatus;
+  subtitle: string;
+  description: string;
+  tags: readonly string[];
+  year: string;
+};
+
 export const projects = [
   {
     id: "01",
@@ -51,7 +63,7 @@ export const projects = [
     tags: ["React", "Node.js", "Supabase"],
     year: "2024",
   },
-] as const;
+] satisfies readonly Project[];
 
 export const skillGauges = [
   { label: "TypeScript · React/Next", value: 90 },
