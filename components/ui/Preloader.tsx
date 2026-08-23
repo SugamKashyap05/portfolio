@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 const SESSION_KEY = "ascent-launched";
@@ -38,16 +38,31 @@ function Scramble({ text }: { text: string }) {
 }
 
 export default function Preloader() {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(true);
   const [step, setStep] = useState(0);
   const [ignited, setIgnited] = useState(false);
   const timersRef = useRef<number[]>([]);
+  const prevOverflowRef = useRef("");
+  const lockedRef = useRef(false);
 
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (window.sessionStorage.getItem(SESSION_KEY)) return;
+  useLayoutEffect(() => {
+    const unlock = () => {
+      if (!lockedRef.current) return;
+      lockedRef.current = false;
+      document.body.style.overflow = prevOverflowRef.current;
+    };
 
-    setActive(true);
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      window.sessionStorage.getItem(SESSION_KEY)
+    ) {
+      setActive(false);
+      return;
+    }
+
+    lockedRef.current = true;
+    prevOverflowRef.current = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
     const timers = timersRef.current;
     STEP_MS.forEach((ms, i) => {
@@ -64,19 +79,26 @@ export default function Preloader() {
     return () => {
       timers.forEach((id) => window.clearTimeout(id));
       timers.length = 0;
+      unlock();
     };
   }, []);
 
   useEffect(() => {
-    if (!active) return;
-    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = "";
+      if (!lockedRef.current) return;
+      lockedRef.current = false;
+      document.body.style.overflow = prevOverflowRef.current;
     };
-  }, [active]);
+  }, []);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence
+      onExitComplete={() => {
+        if (!lockedRef.current) return;
+        lockedRef.current = false;
+        document.body.style.overflow = prevOverflowRef.current;
+      }}
+    >
       {active && (
         <motion.div
           id="preloader"
@@ -129,8 +151,8 @@ export default function Preloader() {
             <div className="pre-track">
               <motion.div
                 className="pre-fill"
-                initial={{ width: "0%" }}
-                animate={{ width: "100%" }}
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
                 transition={{ duration: IGNITION_MS / 1000, ease: "linear" }}
               />
             </div>
