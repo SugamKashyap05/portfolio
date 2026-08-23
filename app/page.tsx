@@ -6,6 +6,12 @@ import Atmosphere from "@/components/atmosphere/Atmosphere";
 import TelemetryHUD from "@/components/ui/TelemetryHUD";
 import FlightPath from "@/components/ui/FlightPath";
 import StaticFX from "@/components/ui/StaticFX";
+import Cursor from "@/components/ui/Cursor";
+import {
+  useMagneticButtons,
+  useScrambleLogHeadings,
+  useWaypointKeys,
+} from "@/lib/polish";
 import Preloader from "@/components/ui/Preloader";
 import MissionStamp from "@/components/ui/MissionStamp";
 import RadioToggle from "@/components/ui/RadioToggle";
@@ -16,9 +22,13 @@ import SystemsCheck from "@/components/sections/SystemsCheck";
 import ContactFinal from "@/components/sections/ContactFinal";
 
 export default function Page() {
+  useMagneticButtons();
+  useScrambleLogHeadings();
+  useWaypointKeys();
   return (
     <MotionConfig reducedMotion="user">
       <Atmosphere />
+      <Cursor />
       <StaticFX />
       <Preloader />
       <a className="brand" href="#hero">

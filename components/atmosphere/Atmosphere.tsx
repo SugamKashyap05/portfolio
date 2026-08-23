@@ -454,6 +454,31 @@ export default function Atmosphere() {
       swayTgt.y = 0;
     };
 
+    const coarse = window.matchMedia("(hover: none)").matches;
+    let gyroBound = false;
+    const onOrient = (e: DeviceOrientationEvent) => {
+      if (reducedRef.current || e.beta == null || e.gamma == null) return;
+      swayTgt.x = clamp(e.gamma, -22, 22) / 22;
+      swayTgt.y = clamp(e.beta, -18, 18) / 18;
+    };
+    const enableGyro = async () => {
+      if (gyroBound || !coarse || reducedRef.current) return;
+      gyroBound = true;
+      try {
+        const doe = window.DeviceOrientationEvent as unknown as {
+          requestPermission?: () => Promise<string>;
+        };
+        if (typeof doe?.requestPermission === "function") {
+          const res = await doe.requestPermission();
+          if (res !== "granted") return;
+        }
+        window.addEventListener("deviceorientation", onOrient);
+      } catch {}
+    };
+    const onTouchEnd = () => {
+      void enableGyro();
+    };
+
     measure();
     lastWi = wiFor(computeAscent(window.scrollY, scrollMax).progress);
     prevAlt = computeAscent(window.scrollY, scrollMax).alt;
@@ -471,6 +496,11 @@ export default function Atmosphere() {
     window.addEventListener("resize", measure);
     window.addEventListener("pointermove", onMove, { passive: true });
     document.documentElement.addEventListener("mouseleave", onLeave);
+    if (coarse) {
+      document.documentElement.addEventListener("touchend", onTouchEnd, {
+        passive: true,
+      });
+    }
     if (document.fonts?.ready) void document.fonts.ready.then(measure);
 
     raf = requestAnimationFrame(frame);
@@ -481,6 +511,8 @@ export default function Atmosphere() {
       window.removeEventListener("resize", measure);
       window.removeEventListener("pointermove", onMove);
       document.documentElement.removeEventListener("mouseleave", onLeave);
+      document.documentElement.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("deviceorientation", onOrient);
     };
   }, []);
 

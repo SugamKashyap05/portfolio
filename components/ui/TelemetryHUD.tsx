@@ -3,26 +3,10 @@
 import { useEffect, useRef } from "react";
 import { ascentStore } from "@/lib/ascent";
 import { fmtAlt, fmtPressure } from "@/lib/atmosphere";
+import { scrambleText } from "@/lib/scramble";
+import { WAYPOINT_NAV_EVENT } from "@/lib/polish";
 
-const GLYPHS = "#/\\<>[]{}*+-_";
-
-function scrambleTo(el: HTMLElement, fin: string) {
-  const anyEl = el as HTMLElement & { _scr?: ReturnType<typeof setInterval> | null };
-  if (anyEl._scr) clearInterval(anyEl._scr);
-  let i = 0;
-  anyEl._scr = setInterval(() => {
-    i++;
-    let out = "";
-    for (let j = 0; j < fin.length; j++) {
-      out += j < i ? fin[j] : GLYPHS[(Math.random() * GLYPHS.length) | 0];
-    }
-    el.textContent = out;
-    if (i >= fin.length) {
-      clearInterval(anyEl._scr!);
-      anyEl._scr = null;
-    }
-  }, 26);
-}
+type NavDetail = { label: string; alt: string; dir: 1 | -1 };
 
 export default function TelemetryHUD() {
   const altRef = useRef<HTMLSpanElement>(null);
@@ -31,6 +15,7 @@ export default function TelemetryHUD() {
   const tmpRef = useRef<HTMLSpanElement>(null);
   const vsRef = useRef<HTMLSpanElement>(null);
   const phaseRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const cache: Record<string, string> = {};
@@ -64,14 +49,30 @@ export default function TelemetryHUD() {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const phase = ascentStore.get().phase;
       if (phaseRef.current) {
-        scrambleTo(phaseRef.current, phase);
+        scrambleText(phaseRef.current, phase, 600);
       }
     };
     window.addEventListener("ascent-waypoint", onWaypoint);
 
+    let navTimer: ReturnType<typeof setTimeout> | null = null;
+    const onNav = (e: Event) => {
+      const d = (e as CustomEvent<NavDetail>).detail;
+      if (navRef.current) {
+        navRef.current.textContent = `${d.dir > 0 ? "NEXT" : "PREV"} ▸ ${d.label} · ALT ${d.alt}`;
+        navRef.current.classList.add("on");
+      }
+      if (navTimer) clearTimeout(navTimer);
+      navTimer = setTimeout(() => {
+        navRef.current?.classList.remove("on");
+      }, 900);
+    };
+    window.addEventListener(WAYPOINT_NAV_EVENT, onNav);
+
     return () => {
       unsub();
       window.removeEventListener("ascent-waypoint", onWaypoint);
+      window.removeEventListener(WAYPOINT_NAV_EVENT, onNav);
+      if (navTimer) clearTimeout(navTimer);
     };
   }, []);
 
@@ -111,6 +112,7 @@ export default function TelemetryHUD() {
       <div className="phase-chip" ref={phaseRef}>
         PRE-LAUNCH
       </div>
+      <div className="nav-chip" ref={navRef} aria-hidden />
     </section>
   );
 }
