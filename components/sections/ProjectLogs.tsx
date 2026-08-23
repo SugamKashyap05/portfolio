@@ -25,9 +25,7 @@ export default function ProjectLogs() {
               <li key={t}>{t.toUpperCase()}</li>
             ))}
           </ul>
-          <a className="btn" href={`#${p.id}`} onClick={(e) => e.preventDefault()}>
-            READ FLIGHT NOTES ↗
-          </a>
+          <p className="case-note">CASE STUDY AVAILABLE ON REQUEST · {p.title.toUpperCase()}</p>
         </LogEntry>
       ))}
     </>

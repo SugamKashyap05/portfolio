@@ -1,7 +1,7 @@
 "use client";
 
 import LogEntry from "@/components/sections/LogEntry";
-import { certifications, logAlts, site } from "@/lib/constants";
+import { certifications, logAlts, nowBuilding, site } from "@/lib/constants";
 
 export default function AboutLog() {
   return (
@@ -45,6 +45,13 @@ export default function AboutLog() {
           <span className="xp-role">Diploma · Sainath University</span>
         </li>
       </ul>
+      <p className="role">NOW BUILDING</p>
+      <div className="building-chip">
+        <span className="livedot" />
+        <span>
+          {nowBuilding.name.toUpperCase()} ▸ {nowBuilding.note.toUpperCase()}
+        </span>
+      </div>
       <p className="role">CERTIFICATIONS</p>
       <ul className="chips">
         {certifications.map((c) => (

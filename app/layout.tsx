@@ -17,9 +17,46 @@ const sans = Manrope({
   display: "swap",
 });
 
+const siteUrl = "https://sugamkashyap05.github.io/portfolio/";
+const metaTitle = `${site.name} — ${site.role}`;
+const metaDescription = `${site.name} — full stack developer and AI systems engineer. A scroll-driven ascent from misty dawn launch to the edge of space.`;
+
 export const metadata: Metadata = {
-  title: `${site.name} — ${site.role}`,
-  description: `${site.name} — full stack developer and AI systems engineer. A scroll-driven ascent from misty dawn launch to the edge of space.`,
+  metadataBase: new URL(siteUrl),
+  title: metaTitle,
+  description: metaDescription,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: siteUrl,
+    siteName: "Sugam Kashyap — Portfolio",
+    title: metaTitle,
+    description: metaDescription,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary",
+    title: metaTitle,
+    description: metaDescription,
+  },
+};
+
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  jobTitle: site.role,
+  email: `mailto:${site.email}`,
+  url: siteUrl,
+  sameAs: [site.socials[0].href, site.socials[1].href],
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Ludhiana",
+    addressRegion: "Punjab",
+    addressCountry: "IN",
+  },
 };
 
 export const viewport: Viewport = {
@@ -32,6 +69,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${mono.variable} ${sans.variable}`} suppressHydrationWarning>
       <body className="bg-void font-body text-signal-ink antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
         {children}
       </body>
     </html>

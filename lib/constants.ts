@@ -66,6 +66,11 @@ export const projects = [
   },
 ] satisfies readonly Project[];
 
+export const nowBuilding = {
+  name: "RawClaw",
+  note: "Local-first multi-agent desktop platform",
+} as const;
+
 export const skillGauges = [
   { label: "TypeScript · React/Next", value: 90 },
   { label: "Node · NestJS · FastAPI", value: 86 },

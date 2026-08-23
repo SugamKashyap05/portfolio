@@ -653,6 +653,25 @@ body {
   color: #10131c;
 }
 
+.case-note {
+  margin-top: 20px;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  color: var(--dim);
+}
+
+.building-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--amber);
+  border: 1px solid rgba(255, 180, 84, 0.35);
+  padding: 8px 16px;
+  border-radius: 999px;
+}
+
 .actions {
   display: flex;
   gap: 12px;
