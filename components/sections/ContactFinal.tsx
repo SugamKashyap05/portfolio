@@ -22,6 +22,12 @@ export default function ContactFinal() {
         <a className="btn" href={`mailto:${site.email}`}>
           EMAIL ↗
         </a>
+        <a className="btn ghost" href="/portfolio/Sugam_Kashyap_CV_updated.pdf" target="_blank" rel="noopener noreferrer">
+          VIEW CV ↗
+        </a>
+        <a className="btn ghost" href="/portfolio/Sugam_Kashyap_CV_updated.pdf" download>
+          DOWNLOAD CV ↓
+        </a>
         {site.socials.map((s) => (
           <a
             key={s.label}

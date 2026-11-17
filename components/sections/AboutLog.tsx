@@ -15,13 +15,28 @@ export default function AboutLog() {
       <h2 id="about-title">About the pilot</h2>
       <p>
         Full Stack Developer and AI Systems Engineer building production-grade
-        agentic AI platforms, multi-agent pipelines, and LLM-integrated web
-        applications. Practical depth in RAG architecture, local LLM inference,
-        MCP tooling, and AI workflow automation with n8n. Experienced across
-        the full SDLC — architecture, backend API design, CI/CD deployment,
-        security testing.
+        agentic AI platforms and LLM-integrated web applications with Python,
+        TypeScript, Next.js, NestJS, and FastAPI. Practical depth in RAG
+        architecture, local LLM inference, MCP tooling, and AI workflow
+        automation with n8n. Experienced across the full SDLC — architecture,
+        backend API design, CI/CD deployment, and security testing.
       </p>
       <ul className="xp">
+        <li>
+          <span className="xp-period">Oct 2026 — Present</span>
+          <span className="xp-role">
+            Freelance Full Stack Developer · AATMA
+          </span>
+          <span className="xp-role">
+            Built and deployed the All Assam Agar Traders &amp; Agaroil
+            Manufacturers&apos; Association&apos;s first public institutional website
+            with React 19, TypeScript, Vite, Tailwind CSS v4, and React Router.
+            Delivered a multi-route information architecture, a 1905–2026
+            timeline, scanned-publication flipbook readers, and a
+            source-grounded content pipeline with accessibility and responsive
+            quality checks.
+          </span>
+        </li>
         <li>
           <span className="xp-period">Jul 2025 — Oct 2025</span>
           <span className="xp-role">

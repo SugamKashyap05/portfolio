@@ -32,17 +32,17 @@ export const projects = [
     description:
       "Production-deployed aggregator running a Gather → Synthesize → Verify → Publish editorial pipeline of cooperating agents. Migrated inference from local Ollama to NVIDIA NIM via a provider abstraction; closed 20 security vulnerabilities through red team/blue team cycles covering the OWASP Top 10; real-time streaming AI chat on a full GitHub Actions + Vercel CI/CD pipeline.",
     tags: ["Next.js", "NestJS", "PostgreSQL", "NVIDIA NIM", "GitHub Actions"],
-    year: "2025",
+    year: "",
   },
   {
     id: "02",
     title: "Lead → Launch",
     status: "In Development",
-    subtitle: "Autonomous freelance client-acquisition pipeline",
+    subtitle: "Personal build — autonomous freelance client-acquisition pipeline",
     description:
       "Local-first lead-generation engine pairing a Next.js dashboard with a custom Claude Code skill — automating a five-phase workflow: Scrape → Audit → Rank → Build → Outreach. Business discovery runs through Google Maps and Apify scraping; automated PageSpeed audits feed ranking logic that surfaces high-potential leads; an AI website-builder step then produces a tailored demo site plus Hinglish/English outreach drafts for each prospective client.",
     tags: ["Next.js", "Claude Code Skill", "Apify", "Google Maps", "PageSpeed API"],
-    year: "2026",
+    year: "",
   },
   {
     id: "03",
@@ -52,7 +52,7 @@ export const projects = [
     description:
       "Signature-based channel deduplication and a custom reliability scoring engine tracking view counts and broken-stream reports; HLS.js playback with bounded retry, automatic source failover, Prisma-backed favourites, history, and per-channel stats.",
     tags: ["Next.js", "hls.js", "Prisma", "PostgreSQL"],
-    year: "2024",
+    year: "",
   },
   {
     id: "04",
@@ -62,7 +62,7 @@ export const projects = [
     description:
       "Full-stack platform with content filtering, screen-time management, and gamification; Supabase real-time auth plus content moderation that detects and blocks inappropriate material.",
     tags: ["React", "Node.js", "Supabase"],
-    year: "2024",
+    year: "",
   },
 ] satisfies readonly Project[];
 
@@ -73,11 +73,11 @@ export const nowBuilding = {
 
 export const skillGauges = [
   { label: "TypeScript · React/Next", value: 90 },
-  { label: "Node · NestJS · FastAPI", value: 86 },
-  { label: "Agentic AI · Multi-Agent", value: 88 },
-  { label: "RAG · LLM Integration", value: 85 },
-  { label: "Databases · Prisma ORM", value: 80 },
-  { label: "DevOps · Security Testing", value: 78 },
+  { label: "Python · FastAPI/Django", value: 86 },
+  { label: "Node · NestJS", value: 84 },
+  { label: "Agentic AI · LangGraph/MCP", value: 88 },
+  { label: "RAG · LLM · n8n", value: 85 },
+  { label: "Data · DevOps · Security", value: 78 },
 ] as const;
 
 export const logAlts = {
